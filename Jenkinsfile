@@ -14,13 +14,13 @@ pipeline {
         stage('Build') {
             
             steps {
-                sh 'docker build -t $IMAGE_NAME:$TAG_NAME .'
+                sh 'docker build -t  $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME .'
                 sh 'docker rm -f  $IMAGE_NAME'
             }
         }
         stage('Test') {
             steps {
-                sh 'docker run -dti  --name $IMAGE_NAME   -p 80:80  $IMAGE_NAME:$TAG_NAME'
+                sh 'docker run -dti  --name $IMAGE_NAME   -p 80:80  $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME'
                 sh 'sleep 5'
                 sh 'curl -I http://172.17.0.1'
         
