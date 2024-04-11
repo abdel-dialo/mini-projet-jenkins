@@ -43,6 +43,15 @@ pipeline {
         
             }
         }
+        stage('deploy') {
+            steps {
+                sh '''
+                cd dev
+                terraform init
+                '''
+        
+            }
+        }
        
         
     }
