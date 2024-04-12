@@ -6,6 +6,8 @@ pipeline {
         TAG_NAME="${PARAM_TAG_NAME}"
         DOCKERHUB_ID="${PARAM_DOCKERHUB_ID}"
         DOCKERHUB_PASSWORD=credentials('DOCKERHUB_PW')
+        AWS_ACCESS_KEY=credentials('aws_access_key')
+        AWS_SECRET_KEY=credentials('aws_secret_key')
         ENV_STAGING = "${PARAM_ENV_STAGING}" 
         ENV_PROD = "${PARAM_ENV_STAGING}"
     }
@@ -47,7 +49,9 @@ pipeline {
             steps {
                 sh '''
                 cd dev
-                terraform init
+                terraform init \
+                  -var AWS_ACCESS_KEY=$(AWS_ACCESS_KEY) \
+                  -var AWS_SECRET_KEY=$(AWS_SECRET_KEY)
                 '''
         
             }
