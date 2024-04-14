@@ -4,7 +4,7 @@ provider "aws" {
   secret_key = var.AWS_SECRET_KEY
 }
 
-module "ec2_prod" {
+module "ec2_staging" {
     source = "../modules/ec2module"
     instancetype = var.instancetype
     env_tag = var.env_tag
@@ -16,7 +16,7 @@ module "ec2_prod" {
 terraform {
   backend "s3" {
     bucket = "terraform-backend-abdoul"
-    key = "./env_prod.tfstate"
+    key = "./env_staging.tfstate"
     region = "us-east-1"
     
   }

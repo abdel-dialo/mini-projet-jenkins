@@ -4,20 +4,19 @@ provider "aws" {
   secret_key = var.AWS_SECRET_KEY
 }
 
-module "ec2_dev" {
+module "ec2_review" {
     source = "../modules/ec2module"
-    instancetype = "t2.nano"
-     ec2_common_tag = {
-    Name = "ec2-dev-abdoul"
+    instancetype = var.instancetype
+    env_tag = var.env_tag
+    ssh_key_file= var.ssh_key_file
+    sg_name= var.sg_name
+
 }
 
-    
-  
-}
 terraform {
   backend "s3" {
     bucket = "terraform-backend-abdoul"
-    key = "./abdoul.tfstate"
+    key = "./env_review.tfstate"
     region = "us-east-1"
     
   }
