@@ -48,7 +48,7 @@ pipeline {
             steps {
                 sh '''
                 cd
-                cd staging
+                cd ./staging
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
@@ -70,7 +70,7 @@ pipeline {
             steps {
                 sh '''
                 cd
-                cd review
+                cd ./review
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
@@ -92,7 +92,7 @@ pipeline {
             steps {
                 sh '''
                 cd
-                cd prod
+                cd ./prod
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
