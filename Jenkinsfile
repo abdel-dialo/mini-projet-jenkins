@@ -8,10 +8,6 @@ pipeline {
         DOCKERHUB_PASSWORD=credentials('DOCKERHUB_PW')
         AWS_ACCESS_KEY=credentials('aws_access_key')
         AWS_SECRET_KEY=credentials('aws_secret_key')
-        choice(
-        name: 'instancetype',
-        choices: ['Please select instance type', 'TS2', 'TS3', 'UAT', 'PPD', 'PRD', 'INT0', 'INT1', 'INT2', 'INT3', 'INT4', 'INT5', 'INT6', 'INT7', 'INT8', 'INT9', 'INTA', 'INTB', 'INTC', 'INTD', 'INTE', 'INTF', 'INTG', 'INTZ', 'RCT', 'TST'],
-        description: 'Please select instance type: t2.nano or t2.micro or t2.medium'
 
     }
 
@@ -57,6 +53,14 @@ pipeline {
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
                   -var-file="env_staging.tfvars"
+                terraform plan \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_staging.tfvars"
+                terraform apply -auto-approve \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_staging.tfvars"
                 cat infos_ec2.txt
                 '''
         
@@ -71,6 +75,14 @@ pipeline {
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
                   -var-file="env_review.tfvars"
+                terraform plan \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_review.tfvars"
+                terraform apply -auto-approve \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_review.tfvars"
                 cat infos_ec2.txt
                 '''
         
@@ -82,6 +94,14 @@ pipeline {
                 cd
                 cd prod
                 terraform init \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_prod.tfvars"
+                terraform plan \
+                  -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
+                  -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
+                  -var-file="env_prod.tfvars"
+                terraform apply -auto-approve \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
                   -var-file="env_prod.tfvars"
