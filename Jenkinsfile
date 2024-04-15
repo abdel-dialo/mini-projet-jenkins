@@ -46,9 +46,9 @@ pipeline {
         }
         stage('deploy staging') {
             steps {
+              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('staging') {
                 sh '''
-                cd
-                cd ./staging
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
@@ -63,14 +63,15 @@ pipeline {
                   -var-file="env_staging.tfvars"
                 cat infos_ec2.txt
                 '''
-        
+                }
+              }
             }
         }
         stage('deploy review') {
             steps {
+              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('review') {
                 sh '''
-                cd
-                cd ./review
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
@@ -85,14 +86,16 @@ pipeline {
                   -var-file="env_review.tfvars"
                 cat infos_ec2.txt
                 '''
+                }
+              }
         
             }
         }
         stage('deploy prod') {
             steps {
+              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir ('prod') {
                 sh '''
-                cd
-                cd ./prod
                 terraform init \
                   -var 'AWS_ACCESS_KEY=$(AWS_ACCESS_KEY)' \
                   -var 'AWS_SECRET_KEY=$(AWS_SECRET_KEY)' \
@@ -107,6 +110,8 @@ pipeline {
                   -var-file="env_prod.tfvars"
                 cat infos_ec2.txt
                 '''
+                }
+              }
         
             }
         }
