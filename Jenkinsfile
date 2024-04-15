@@ -44,7 +44,8 @@ pipeline {
         
             }
         }
-        stage('deploy staging') {
+        stage('deploy staging and test') {
+          
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 dir('staging') {
@@ -64,12 +65,20 @@ pipeline {
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker pull $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker container rm -f $IMAGE_NAME || true"
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker run --rm -d -p 80:80 --name ${IMAGE_NAME} $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
+                sudo yum install curl
+                curl "http://$STAGING_SERVER" | grep -i "Dimension" 
                 '''
                 }
               }
             }
         }
+       stage('test deploy staging') {
+        sh '''
+          
+        '''
+       }
         stage('deploy review') {
+          when { changeRequest target: 'main' }
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 dir('review') {
@@ -96,6 +105,9 @@ pipeline {
             }
         }
         stage('deploy prod') {
+           when {
+           expression { GIT_BRANCH == 'origin/main' }
+           }
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 dir ('prod') {
@@ -115,7 +127,8 @@ pipeline {
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$PROD_SERVER "docker pull $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$PROD_SERVER "docker container rm -f $IMAGE_NAME || true"
                 ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$PROD_SERVER "docker run --rm -d -p 80:80 --name ${IMAGE_NAME} $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
-                
+                sudo yum install curl
+                curl "http://$PROD_SERVER" | grep -i "Dimension" 
                 '''
                 }
               }
