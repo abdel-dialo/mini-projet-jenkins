@@ -44,8 +44,7 @@ pipeline {
         
             }
         }
-        stage('deploy staging and test') {
-          
+        stage('deploy staging and test') {          
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 dir('staging') {
@@ -72,11 +71,6 @@ pipeline {
               }
             }
         }
-       stage('test deploy staging') {
-        sh '''
-          
-        '''
-       }
         stage('deploy review') {
           when { changeRequest target: 'main' }
             steps {
@@ -104,7 +98,7 @@ pipeline {
         
             }
         }
-        stage('deploy prod') {
+        stage('deploy prod and test') {
            when {
            expression { GIT_BRANCH == 'origin/main' }
            }
