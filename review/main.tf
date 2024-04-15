@@ -1,8 +1,8 @@
 provider "aws" {
   region     = var.AWS_REGION
-  }
+}
 
-module "ec2_prod" {
+module "ec2_review" {
     source = "../modules/ec2module"
     instancetype = var.instancetype
     env_tag = var.env_tag
@@ -14,7 +14,7 @@ module "ec2_prod" {
 terraform {
   backend "s3" {
     bucket = "terraform-backend-abdoul"
-    key = "./env_prod.tfstate"
+    key = "./env_review.tfstate"
     region = "us-east-1"
     
   }

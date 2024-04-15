@@ -1,42 +1,48 @@
 
 data "aws_ami" "my_aws_ami" {
   most_recent = true
-  owners      = ["amazon"] # Canonical
+  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
-
-
 }
 
 resource "aws_instance" "my_ec2_instance" {
   ami             = data.aws_ami.my_aws_ami.id
   instance_type   = var.instancetype
-  key_name        = "centosEasyTraining"
-  tags            = var.ec2_common_tag
+  key_name        = "jenkins"
+  tags            = var.env_tag
   security_groups = ["${aws_security_group.ssh_http_https.name}"]
 
   connection {
     type        = "ssh"
-    user = "ec2-user"
-    private_key = file("./centosEasyTraining.pem")
+    user = "ubuntu"
+    private_key = file(var.ssh_key_file)
     host        = self.public_ip
     timeout = "1m"
   }
 
+ 
+
   provisioner "remote-exec" {
     inline = [
-      "sudo amazon-linux-extras install -y nginx1.12",
-      "sudo systemctl start nginx"
+      "sudo apt update -y",
+      "sudo curl -fsSL https://get.docker.com -o get-docker.sh",
+      "sudo sh get-docker.sh",
+      "sudo service docker start",
+      "sudo chkconfig docker on",
+      "sudo usermod -aG docker ubuntu",
+      "sudo docker --version",
+      "exit"
     ]
   }
 
 }
 
 resource "aws_security_group" "ssh_http_https" {
-  name        = var.ec2_sg_name
+  name        = var.sg_name
   description = "Allow HTTPS and HTTP inbound traffic"
 
   ingress {
@@ -75,7 +81,7 @@ resource "aws_eip" "my_eip" {
   instance = aws_instance.my_ec2_instance.id
   domain   = "vpc"
   provisioner "local-exec" {
-    command = "echo PUBLIC IP: ${self.public_ip}  INSTANCE ID: ${aws_instance.my_ec2_instance.id}  ZONE AVAIBILITY:${aws_instance.my_ec2_instance.availability_zone}  >> infos_ec2.txt"
+    command = "echo PUBLIC_IP: ${self.public_ip}  > infos_ec2.txt"
   }
 }
 
