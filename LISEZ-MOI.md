@@ -13,10 +13,14 @@ Promotion: BootCamp DevOps 17
 **static-website-Example** est un site web static 
 # Prérequis
   Avoir Jenkins d'installé sur une machine ou un conteneur docker.
+
   Dans le cadre de ce projet le serveur Jenkins est un conteneur docker qui s'exécute sur une instance ec2 dans AWS.
 
   ![alt text](images/image-15.png)
 
+  Dans le cadre ce projet serveur Jenkins est un conteneur docker sur machine ec2 dans AWS
+  ![alt text](images/image-15.png)
+  
 # Objectif du mini projet
 
 - Faire un fichier Dockerfile à partir duquel on va builder l'image qui permettra de déployer l'application
@@ -53,6 +57,7 @@ Promotion: BootCamp DevOps 17
       (unix:///var/run/docker.sock)
     - Tester la connectivité
 
+
 - Terraform plugin
 
    ![alt text](images/terraform-request-plugin.png)
@@ -75,12 +80,13 @@ Promotion: BootCamp DevOps 17
 
 - Configuration du Webhook
   - Aller sur le _mini-projet-jenkins_ dans github  → Settings  → Webhooks → Ajouter un webhooks en renseignant l'url de la machine Jenkins 
+<
 
   ![alt text](images/image-13.png)
 
   - Aller sur le job du _mini-projet-jenkins_ dans jenkins  → Configure  → Build Triggers
   → GitHub hook trigger for GITScm polling
-
+ 
   ![alt text](images/image-14.png)
 
  
@@ -128,7 +134,8 @@ Promotion: BootCamp DevOps 17
    ![alt text](images/image-2.png)
 
   Pour mettre en place le CI/CD j'ai créé un fichier _Jenkinsfile_ à la racine du projet.
-  Le CI/CD sera constitué des étapes suivantes:
+  Le CI/CD sera constitué des étapes suivante:
+  
   - Environnement: qui contient les variables d'environnement suivant:
 
      **IMAGE_NAME**: nom de l'image docker qui pourra être surchargé lors du build
@@ -143,6 +150,7 @@ Promotion: BootCamp DevOps 17
 
      **SSH_PRIVATE_KEY**:variable de type _secret file_  contenant la paire de clé de l'instance ec2.
 
+
   - Stages:
      - Build image
      - Test acceptation
@@ -154,7 +162,9 @@ Promotion: BootCamp DevOps 17
      - build
      - deploy  
 
+
 ## Build image
+
 
   Dans le job _Build_ on conteneurise l’application à partir du _Dockerfile_ 
    
@@ -174,6 +184,7 @@ Promotion: BootCamp DevOps 17
 ## Deploy staging and test
 
   - Provisionnement de l'environnement **staging** à partir des modules terraform
+
 
     Ajout de 3 ressources: **aws_instance**, **aws_security_group** et **aws_eip** 
 
@@ -195,6 +206,7 @@ Promotion: BootCamp DevOps 17
 
   - Provisionnement de l'environnement **prod** à partir des modules terraform
 
+
     ![alt text](images/image-10.png)
     ![alt text](images/image-11.png)
 
@@ -210,6 +222,8 @@ Promotion: BootCamp DevOps 17
   ![alt text](images/image-20.png)
 
 # Conclusion
+
+
 
  Ce projet m'a permit de mettre en pratique:
  - Le CI/CD sur Jenkins
