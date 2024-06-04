@@ -5,3 +5,4 @@
 *terraform.tfstate.backup
 *terraform.tfvars
 *.terraform
+*.infos_ec2.txt.swp

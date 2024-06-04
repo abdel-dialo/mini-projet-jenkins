@@ -6,7 +6,7 @@ pipeline {
     environment {
         IMAGE_NAME="${PARAM_IMAGE_NAME}"
         TAG_NAME="${PARAM_TAG_NAME}"
-        SERVER_USER="ubuntu"
+        SERVER_USER="${PARAM_SERVER_USER}"
         DOCKERHUB_ID="${PARAM_DOCKERHUB_ID}"
         DOCKERHUB_PASSWORD=credentials('DOCKERHUB_PW')
         SSH_PRIVATE_KEY=credentials('aws_key_paire')
@@ -46,7 +46,7 @@ pipeline {
         
             }
         }
-        stage('deploy staging and test') {          
+        stage('Deploy staging and test') {          
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 dir('staging') {
@@ -73,7 +73,8 @@ pipeline {
               }
             }
         }
-        stage('deploy review') {
+
+        stage('Deploy review') {
           when { changeRequest () }
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -100,7 +101,7 @@ pipeline {
         
             }
         }
-        stage('deploy prod and test') {
+        stage('Deploy prod and test') {
            when {
            expression { GIT_BRANCH == 'origin/main' }
            }
