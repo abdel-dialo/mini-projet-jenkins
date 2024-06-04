@@ -29,7 +29,7 @@ pipeline {
         
             }
         }
-        stage('clear container') {
+        stage('Clear container') {
             steps {
                 sh '''
                  docker stop $IMAGE_NAME
