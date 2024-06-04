@@ -74,33 +74,7 @@ pipeline {
             }
         }
 
-        stage('Deploy review') {
-          when { changeRequest () }
-            steps {
-              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                dir('review') {
-                sh '''
-                terraform init \
-                  -var-file="env_review.tfvars" \
-                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
-                terraform plan \
-                  -var-file="env_review.tfvars" \
-                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
-                terraform apply -auto-approve \
-                  -var-file="env_review.tfvars" \
-                  -var ssh_key_file="${SSH_PRIVATE_KEY}"
-                export REVIEW_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
-                chmod og= $SSH_PRIVATE_KEY
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$REVIEW_SERVER "docker login -u "$DOCKERHUB_ID" -p "$DOCKERHUB_PASSWORD""
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$REVIEW_SERVER "docker pull $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$REVIEW_SERVER "docker container rm -f $IMAGE_NAME || true"
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$REVIEW_SERVER "docker run --rm -d -p 80:80 --name ${IMAGE_NAME} $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
-                '''
-                }
-              }
-        
-            }
-        }
+     
         stage('Deploy prod and test') {
            when {
            expression { GIT_BRANCH == 'origin/main' }
