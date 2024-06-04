@@ -155,8 +155,6 @@ Promotion: BootCamp DevOps 17
      - Build image
      - Test acceptation
      - Release image
-     - Deploy review
-     - Stop review
      - Deploy staging
      - validate
      - build
@@ -198,9 +196,11 @@ Promotion: BootCamp DevOps 17
 
     ![alt text](images/image-9.png)
 
+
 ## Deploy review  
 
   Ce job n'est exécuté que lorsqu'on ouvre une _merge request_ ainsi l'application est déployée sur l'environnement de revue
+
 
 ## Deploy prod and test
 
