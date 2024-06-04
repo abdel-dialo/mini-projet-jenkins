@@ -13,8 +13,14 @@ Promotion: BootCamp DevOps 17
 **static-website-Example** est un site web static 
 # Prérequis
   Avoir Jenkins d'installé sur une machine ou un conteneur docker.
+
+  Dans le cadre de ce projet le serveur Jenkins est un conteneur docker qui s'exécute sur une instance ec2 dans AWS.
+
+  ![alt text](images/image-15.png)
+
   Dans le cadre ce projet serveur Jenkins est un conteneur docker sur machine ec2 dans AWS
   ![alt text](images/image-15.png)
+  
 # Objectif du mini projet
 
 - Faire un fichier Dockerfile à partir duquel on va builder l'image qui permettra de déployer l'application
@@ -34,32 +40,53 @@ Promotion: BootCamp DevOps 17
 - Dockerfile
 - Modules terraform (dossier modules,prod,review et staging)
 - Fichier _Jenkinsfile_
-- Fichier _LISEZ-MOI.md_
+- Fichier _LISEZ-MOI.md_ ou _README.md_
 
 # Installation des plugins jenkins et configuration
+
 - HTTP request
+
+   ![alt text](images/http-request-plugin.png)
+
 - docker-build-step
+
+  ![alt text](images/docker-build-plugin.png)
+
   - Configuration 
     - Aller sur _Manage jenkins_ → _Configure system_ → _Docker Builder_ → renseigner la socket unix 
       (unix:///var/run/docker.sock)
     - Tester la connectivité
+
+
 - Terraform plugin
+
+   ![alt text](images/terraform-request-plugin.png)
+
   - Configuration
     - Télécharger le binaire Terraform sur le conteneur Jenkins
+
      ![alt text](images/image-16.png)
      ![alt text](images/image-17.png)
+
     - Aller sur _Manage jenkins_ → _Global Tool configuration → _Terraform_ → _Add terraform_
     - Renseigner le chemin du binaire terraform sur le conteneur Jenkins
+
      ![alt text](images/image-18.png)
+
 - Ansible
   - Installer Ansible sur le conteneur Jenkins 
+
     ![alt text](images/image-19.png)
 
 - Configuration du Webhook
   - Aller sur le _mini-projet-jenkins_ dans github  → Settings  → Webhooks → Ajouter un webhooks en renseignant l'url de la machine Jenkins 
+<
+
   ![alt text](images/image-13.png)
+
   - Aller sur le job du _mini-projet-jenkins_ dans jenkins  → Configure  → Build Triggers
   → GitHub hook trigger for GITScm polling
+ 
   ![alt text](images/image-14.png)
 
  
@@ -107,15 +134,22 @@ Promotion: BootCamp DevOps 17
    ![alt text](images/image-2.png)
 
   Pour mettre en place le CI/CD j'ai créé un fichier _Jenkinsfile_ à la racine du projet.
-  Le CI/CD sera constitué des étapes suivantes:
-  - Environnement: qui contient les variables d'environnement   
-    suivant 
-     IMAGE_NAME:nom de l'image docker qui pourra être surchargé lors du build
-     TAG_NAME: tag de l'image docker qui pourra être surchargé lors du build
-     SERVER_USER: utilisateur par défaut de l'instance ec2.
-     DOCKERHUB_ID: _id_ du Dockerhub
-     DOCKERHUB_PASSWORD: variable type _secret text_ qui contient le mot de passe du Dockerhub.
-     SSH_PRIVATE_KEY:variable de type _secret file_  contenant la paire de clé de l'instance ec2.
+  Le CI/CD sera constitué des étapes suivante:
+  
+  - Environnement: qui contient les variables d'environnement suivant:
+
+     **IMAGE_NAME**: nom de l'image docker qui pourra être surchargé lors du build
+
+     **TAG_NAME**: tag de l'image docker qui pourra être surchargé lors du build
+
+     **SERVER_USER**: utilisateur par défaut de l'instance ec2.
+
+     **DOCKERHUB_ID**: _id_ du Dockerhub
+
+     **DOCKERHUB_PASSWORD**: variable type _secret text_ qui contient le mot de passe du Dockerhub.
+
+     **SSH_PRIVATE_KEY**:variable de type _secret file_  contenant la paire de clé de l'instance ec2.
+
 
   - Stages:
      - Build image
@@ -128,7 +162,9 @@ Promotion: BootCamp DevOps 17
      - build
      - deploy  
 
-## Build
+
+## Build image
+
 
   Dans le job _Build_ on conteneurise l’application à partir du _Dockerfile_ 
    
@@ -142,11 +178,13 @@ Promotion: BootCamp DevOps 17
 ## Release image
 
   Une fois que le job de test d'acceptation est passe, dans le job _Release image_ on pousse l'image dans le registre Dockerhub
-    ![alt text](images/image-4.png) 
 
-## deploy staging and test
+  ![alt text](images/image-4.png) 
 
-  - Provisionnement de l'environnement staging à partir des modules terraform
+## Deploy staging and test
+
+  - Provisionnement de l'environnement **staging** à partir des modules terraform
+
 
     Ajout de 3 ressources: **aws_instance**, **aws_security_group** et **aws_eip** 
 
@@ -160,13 +198,14 @@ Promotion: BootCamp DevOps 17
 
     ![alt text](images/image-9.png)
 
-## deploy review  
+## Deploy review  
 
-  Ce job n'est exécuté que lorsqu'on ouvre une merge request ainsi l'application est déployée sur l'environnement de revue
+  Ce job n'est exécuté que lorsqu'on ouvre une _merge request_ ainsi l'application est déployée sur l'environnement de revue
 
-## deploy prod and test
+## Deploy prod and test
 
-  - Provisionnement de l'environnement prod à partir des modules terraform
+  - Provisionnement de l'environnement **prod** à partir des modules terraform
+
 
     ![alt text](images/image-10.png)
     ![alt text](images/image-11.png)
@@ -183,7 +222,11 @@ Promotion: BootCamp DevOps 17
   ![alt text](images/image-20.png)
 
 # Conclusion
+
+
+
  Ce projet m'a permit de mettre en pratique:
  - Le CI/CD sur Jenkins
  - l'IaC ( provisionnement d'infrastructure et déploiement d'application avez Terraform )
  - Le cloud AWS 
+
