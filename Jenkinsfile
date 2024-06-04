@@ -73,6 +73,7 @@ pipeline {
               }
             }
         }
+
         stage('Deploy review') {
           when { changeRequest () }
             steps {
