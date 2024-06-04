@@ -13,8 +13,10 @@ Promotion: BootCamp DevOps 17
 **static-website-Example** est un site web static 
 # Prérequis
   Avoir Jenkins d'installé sur une machine ou un conteneur docker.
-  Dans le cadre ce projet serveur Jenkins est un conteneur docker sur machine ec2 dans AWS
+  Dans le cadre de ce projet le serveur Jenkins est un conteneur docker qui s'exécute sur une instance ec2 dans AWS.
+
   ![alt text](images/image-15.png)
+
 # Objectif du mini projet
 
 - Faire un fichier Dockerfile à partir duquel on va builder l'image qui permettra de déployer l'application
@@ -34,32 +36,51 @@ Promotion: BootCamp DevOps 17
 - Dockerfile
 - Modules terraform (dossier modules,prod,review et staging)
 - Fichier _Jenkinsfile_
-- Fichier _LISEZ-MOI.md_
+- Fichier _LISEZ-MOI.md_ ou _README.md_
 
 # Installation des plugins jenkins et configuration
+
 - HTTP request
+
+   ![alt text](images/http-request-plugin.png)
+
 - docker-build-step
+
+  ![alt text](images/docker-build-plugin.png)
+
   - Configuration 
     - Aller sur _Manage jenkins_ → _Configure system_ → _Docker Builder_ → renseigner la socket unix 
       (unix:///var/run/docker.sock)
     - Tester la connectivité
+
 - Terraform plugin
+
+   ![alt text](images/terraform-request-plugin.png)
+
   - Configuration
     - Télécharger le binaire Terraform sur le conteneur Jenkins
+
      ![alt text](images/image-16.png)
      ![alt text](images/image-17.png)
+
     - Aller sur _Manage jenkins_ → _Global Tool configuration → _Terraform_ → _Add terraform_
     - Renseigner le chemin du binaire terraform sur le conteneur Jenkins
+
      ![alt text](images/image-18.png)
+
 - Ansible
   - Installer Ansible sur le conteneur Jenkins 
+
     ![alt text](images/image-19.png)
 
 - Configuration du Webhook
   - Aller sur le _mini-projet-jenkins_ dans github  → Settings  → Webhooks → Ajouter un webhooks en renseignant l'url de la machine Jenkins 
+
   ![alt text](images/image-13.png)
+
   - Aller sur le job du _mini-projet-jenkins_ dans jenkins  → Configure  → Build Triggers
   → GitHub hook trigger for GITScm polling
+
   ![alt text](images/image-14.png)
 
  
@@ -142,7 +163,8 @@ Promotion: BootCamp DevOps 17
 ## Release image
 
   Une fois que le job de test d'acceptation est passe, dans le job _Release image_ on pousse l'image dans le registre Dockerhub
-    ![alt text](images/image-4.png) 
+
+  ![alt text](images/image-4.png) 
 
 ## deploy staging and test
 
