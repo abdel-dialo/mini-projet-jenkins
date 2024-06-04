@@ -154,11 +154,11 @@ Promotion: BootCamp DevOps 17
   - Stages:
      - Build image
      - Test acceptation
+     - Clear container
      - Release image
-     - Deploy staging
-     - validate
-     - build
-     - deploy  
+     - Deploy staging and test
+     - Deploy review
+     - Deploy prod and test 
 
 
 ## Build image
