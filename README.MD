@@ -129,14 +129,19 @@ Promotion: BootCamp DevOps 17
 
   Pour mettre en place le CI/CD j'ai créé un fichier _Jenkinsfile_ à la racine du projet.
   Le CI/CD sera constitué des étapes suivantes:
-  - Environnement: qui contient les variables d'environnement   
-    suivant 
-     IMAGE_NAME:nom de l'image docker qui pourra être surchargé lors du build
-     TAG_NAME: tag de l'image docker qui pourra être surchargé lors du build
-     SERVER_USER: utilisateur par défaut de l'instance ec2.
-     DOCKERHUB_ID: _id_ du Dockerhub
-     DOCKERHUB_PASSWORD: variable type _secret text_ qui contient le mot de passe du Dockerhub.
-     SSH_PRIVATE_KEY:variable de type _secret file_  contenant la paire de clé de l'instance ec2.
+  - Environnement: qui contient les variables d'environnement suivant:
+
+     **IMAGE_NAME**: nom de l'image docker qui pourra être surchargé lors du build
+
+     **TAG_NAME**: tag de l'image docker qui pourra être surchargé lors du build
+
+     **SERVER_USER**: utilisateur par défaut de l'instance ec2.
+
+     **DOCKERHUB_ID**: _id_ du Dockerhub
+
+     **DOCKERHUB_PASSWORD**: variable type _secret text_ qui contient le mot de passe du Dockerhub.
+
+     **SSH_PRIVATE_KEY**:variable de type _secret file_  contenant la paire de clé de l'instance ec2.
 
   - Stages:
      - Build image
@@ -149,7 +154,7 @@ Promotion: BootCamp DevOps 17
      - build
      - deploy  
 
-## Build
+## Build image
 
   Dans le job _Build_ on conteneurise l’application à partir du _Dockerfile_ 
    
@@ -166,9 +171,9 @@ Promotion: BootCamp DevOps 17
 
   ![alt text](images/image-4.png) 
 
-## deploy staging and test
+## Deploy staging and test
 
-  - Provisionnement de l'environnement staging à partir des modules terraform
+  - Provisionnement de l'environnement **staging** à partir des modules terraform
 
     Ajout de 3 ressources: **aws_instance**, **aws_security_group** et **aws_eip** 
 
@@ -182,13 +187,13 @@ Promotion: BootCamp DevOps 17
 
     ![alt text](images/image-9.png)
 
-## deploy review  
+## Deploy review  
 
-  Ce job n'est exécuté que lorsqu'on ouvre une merge request ainsi l'application est déployée sur l'environnement de revue
+  Ce job n'est exécuté que lorsqu'on ouvre une _merge request_ ainsi l'application est déployée sur l'environnement de revue
 
-## deploy prod and test
+## Deploy prod and test
 
-  - Provisionnement de l'environnement prod à partir des modules terraform
+  - Provisionnement de l'environnement **prod** à partir des modules terraform
 
     ![alt text](images/image-10.png)
     ![alt text](images/image-11.png)
@@ -205,6 +210,7 @@ Promotion: BootCamp DevOps 17
   ![alt text](images/image-20.png)
 
 # Conclusion
+
  Ce projet m'a permit de mettre en pratique:
  - Le CI/CD sur Jenkins
  - l'IaC ( provisionnement d'infrastructure et déploiement d'application avez Terraform )
