@@ -44,14 +44,6 @@ Promotion: BootCamp DevOps 17
 
    ![alt text](images/http-request-plugin.png)
 
-- docker-build-step
-
-  ![alt text](images/docker-build-plugin.png)
-
-  - Configuration 
-    - Aller sur _Manage jenkins_ → _Configure system_ → _Docker Builder_ → renseigner la socket unix 
-      (unix:///var/run/docker.sock)
-    - Tester la connectivité
 
 - Terraform plugin
 
@@ -68,10 +60,6 @@ Promotion: BootCamp DevOps 17
 
      ![alt text](images/image-18.png)
 
-- Ansible
-  - Installer Ansible sur le conteneur Jenkins 
-
-    ![alt text](images/image-19.png)
 
 - Configuration du Webhook
   - Aller sur le _mini-projet-jenkins_ dans github  → Settings  → Webhooks → Ajouter un webhooks en renseignant l'url de la machine Jenkins 
@@ -125,7 +113,7 @@ Promotion: BootCamp DevOps 17
 
 # Création du pipeline CI/CD
 
-   ![alt text](images/image-2.png)
+   ![alt text](images/image-pipeline.png)
 
   Pour mettre en place le CI/CD j'ai créé un fichier _Jenkinsfile_ à la racine du projet.
   Le CI/CD sera constitué des étapes suivantes:
@@ -149,8 +137,11 @@ Promotion: BootCamp DevOps 17
      - Clear container
      - Release image
      - Deploy staging and test
+     - Test staging
      - Deploy review
      - Deploy prod and test
+     - Test prod
+ 
 
 ## Build image
 
@@ -169,7 +160,7 @@ Promotion: BootCamp DevOps 17
 
   ![alt text](images/image-4.png) 
 
-## Deploy staging and test
+## Deploy staging 
 
   - Provisionnement de l'environnement **staging** à partir des modules terraform
 
@@ -178,8 +169,11 @@ Promotion: BootCamp DevOps 17
       ![alt text](images/image-5.png)
       ![alt text](images/image-6.png)
       ![alt text](images/image-7.png)
+      
 
   - Déploiement de l'application **static-website-Example**
+
+## Test staging
 
   - Test de l'application après le déploiement 
 
@@ -188,8 +182,10 @@ Promotion: BootCamp DevOps 17
 ## Deploy review  
 
   Ce job n'est exécuté que lorsqu'on ouvre une _merge request_ ainsi l'application est déployée sur l'environnement de revue
+   ![alt text](images/env-review1.png)
+   ![alt text](images/env-review2.png)
 
-## Deploy prod and test
+## Deploy prod
 
   - Provisionnement de l'environnement **prod** à partir des modules terraform
 
@@ -197,6 +193,8 @@ Promotion: BootCamp DevOps 17
     ![alt text](images/image-11.png)
 
   - Déploiement de l'application **static-website-Example**
+
+## Test prod
 
   - Test de l'application après le déploiement 
 
