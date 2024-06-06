@@ -46,6 +46,13 @@ pipeline {
         
             }
         }
+    stage('deploy') {
+       agent { 
+                    docker { 
+                            image 'jenkins/jnlp-agent-terraform'  
+                    } 
+              }
+      stages {
         stage('Deploy staging') {          
             steps {
               withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
@@ -78,7 +85,8 @@ pipeline {
                 dir('staging') {
                 sh '''  
                 export STAGING_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
-                sudo yum install curl
+                apk upgrade
+                apk add curl
                 curl "http://$STAGING_SERVER" | grep -i "Dimension" 
                 '''
                 }
@@ -152,13 +160,16 @@ pipeline {
               
                 dir ('prod') {
                 sh '''
-                sudo yum install curl
                 export PROD_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
+                apk upgrade
+                apk add curl
                 curl "http://$PROD_SERVER" | grep -i "Dimension" 
                 '''
                 }
               }
-        }
+         }
+    }
+    }
     }
     post {
     always {
