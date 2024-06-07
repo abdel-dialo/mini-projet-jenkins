@@ -112,7 +112,7 @@ Promotion: BootCamp DevOps 17
   - On clone les sources de l'application pour avoir les dernièrs mises de l'application dans le conteneur après le déploiement 
 
 # Création du pipeline CI/CD
-
+ 
    ![alt text](images/image-pipeline.png)
 
   Pour mettre en place le CI/CD j'ai créé un fichier _Jenkinsfile_ à la racine du projet.

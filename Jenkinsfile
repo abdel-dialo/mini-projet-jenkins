@@ -53,47 +53,7 @@ pipeline {
                     } 
               }
       stages {
-        stage('Deploy staging') {          
-            steps {
-              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                dir('staging') {
-                sh '''
-                terraform init \
-                  -var-file="env_staging.tfvars" \
-                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
-                terraform plan \
-                  -var-file="env_staging.tfvars" \
-                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
-                terraform apply -auto-approve \
-                  -var-file="env_staging.tfvars" \
-                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
-                export STAGING_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
-                chmod og= $SSH_PRIVATE_KEY
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker login -u "$DOCKERHUB_ID" -p "$DOCKERHUB_PASSWORD""
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker pull $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker container rm -f $IMAGE_NAME || true"
-                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker run --rm -d -p 80:80 --name ${IMAGE_NAME} $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
-                 
-                '''
-                }
-              }
-            }
-        }
-
-        stage('Test staging') {          
-            steps {           
-                dir('staging') {
-                sh '''  
-                export STAGING_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
-                apk upgrade
-                apk add curl
-                curl "http://$STAGING_SERVER" | grep -i "Dimension" 
-                '''
-                }
-              }
-            }
         
-
         stage('Deploy review') {
           when { changeRequest () }
             steps {
@@ -121,6 +81,54 @@ pipeline {
         
             }
         }
+        stage('Deploy staging') { 
+          when {
+           expression { GIT_BRANCH == 'origin/main' }
+           }         
+            steps {
+              withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_access', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('staging') {
+                sh '''
+                terraform init \
+                  -var-file="env_staging.tfvars" \
+                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
+                terraform plan \
+                  -var-file="env_staging.tfvars" \
+                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
+                terraform apply -auto-approve \
+                  -var-file="env_staging.tfvars" \
+                  -var  ssh_key_file="${SSH_PRIVATE_KEY}"
+                export STAGING_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
+                chmod og= $SSH_PRIVATE_KEY
+                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker login -u "$DOCKERHUB_ID" -p "$DOCKERHUB_PASSWORD""
+                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker pull $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
+                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker container rm -f $IMAGE_NAME || true"
+                ssh -i $SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $SERVER_USER@$STAGING_SERVER "docker run --rm -d -p 80:80 --name ${IMAGE_NAME} $DOCKERHUB_ID/$IMAGE_NAME:$TAG_NAME"
+                 
+                '''
+                }
+              }
+            }
+        }
+
+        stage('Test staging') {   
+          when {
+           expression { GIT_BRANCH == 'origin/main' }
+           }       
+            steps {           
+                dir('staging') {
+                sh '''  
+                export STAGING_SERVER=$(awk '/PUBLIC_IP/ {sub(/^.* *PUBLIC_IP/,""); print $2}' infos_ec2.txt)
+                apk upgrade
+                apk add curl
+                curl "http://$STAGING_SERVER" | grep -i "Dimension" 
+                '''
+                }
+              }
+            }
+        
+
+        
         stage('Deploy prod') {
            when {
            expression { GIT_BRANCH == 'origin/main' }
