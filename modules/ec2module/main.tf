@@ -12,7 +12,7 @@ data "aws_ami" "my_aws_ami" {
 resource "aws_instance" "my_ec2_instance" {
   ami             = data.aws_ami.my_aws_ami.id
   instance_type   = var.instancetype
-  key_name        = "jenkins"
+  key_name        = "centosEasyTraining"
   tags            = var.env_tag
   security_groups = ["${aws_security_group.ssh_http_https.name}"]
 
